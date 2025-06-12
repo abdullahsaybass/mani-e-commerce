@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   FaHeart,
@@ -8,6 +7,7 @@ import {
   FaTimes,
   FaUserCircle,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { assets } from "../../../assets/assets";
 import "./Header.css";
 
@@ -21,7 +21,7 @@ const MENU = [
   { label: "Contact", href: "#" },
 ];
 
-const Header = ({ isLoggedIn = false, onLogin, onLogout }) => {
+const Header = ({ isLoggedIn = false }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -46,14 +46,14 @@ const Header = ({ isLoggedIn = false, onLogin, onLogout }) => {
           <div className="slice login-slice desktop-only">
             {!isLoggedIn ? (
               <>
-                <a href="#" onClick={onLogin}>LOGIN</a>
+                <Link to="/login">LOGIN</Link>
                 <span className="or">OR</span>
-                <a href="#" onClick={onLogin}>REGISTER</a>
+                <Link to="/register">REGISTER</Link>
               </>
             ) : (
-              <a href="#/profile" className="profile-icon">
+              <Link to="/profile" className="profile-icon">
                 <FaUserCircle />
-              </a>
+              </Link>
             )}
           </div>
           <div className="lang-slice">
@@ -79,23 +79,23 @@ const Header = ({ isLoggedIn = false, onLogin, onLogout }) => {
         <div className="header-file">
           <img src={assets.logo} alt="Logo" className="header-logo" />
 
-          {/* mobile-only actions and drawer */}
+          {/* Mobile Actions */}
           <div className="mobile-header-actions">
             {!isMobileMenuOpen && (
               <>
                 {!isLoggedIn ? (
-                  <button className="mobile-login-btn" onClick={onLogin}>
+                  <Link className="mobile-login-btn" to="/login">
                     LOGIN
-                  </button>
+                  </Link>
                 ) : (
-                  <a href="#/profile" className="mobile-profile-icon">
+                  <Link to="/profile" className="mobile-profile-icon">
                     <FaUserCircle />
-                  </a>
+                  </Link>
                 )}
-                <a href="#" className="mobile-cart">
+                <Link to="/cart" className="mobile-cart">
                   <FaShoppingBag />
                   <span className="badge">5</span>
-                </a>
+                </Link>
               </>
             )}
 
@@ -104,7 +104,7 @@ const Header = ({ isLoggedIn = false, onLogin, onLogout }) => {
               onClick={() => setIsMobileMenuOpen(true)}
             />
 
-            {/* Drawer */}
+            {/* Drawer Navigation */}
             <nav className={`nav-links ${isMobileMenuOpen ? "open" : ""}`}>
               <div className="drawer-header">
                 <span className="drawer-title">Menu</span>
@@ -129,14 +129,18 @@ const Header = ({ isLoggedIn = false, onLogin, onLogout }) => {
             </nav>
           </div>
 
+          {/* Desktop Menu */}
           <div className="header-menu">
             <FaSearch className="search-icon" />
             <FaBars
               className="hamburger-icon"
               onClick={() => setIsMobileMenuOpen(true)}
             />
-
-            <nav className={`nav-links desktop-nav ${isMobileMenuOpen ? "open" : ""}`}>
+            <nav
+              className={`nav-links desktop-nav ${
+                isMobileMenuOpen ? "open" : ""
+              }`}
+            >
               {MENU.map((item, idx) => (
                 <a
                   key={idx}

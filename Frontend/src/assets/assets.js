@@ -2,8 +2,8 @@ import logo from './mani-textile-logo.png';
 import background from './background.jpg';
 import hero from './hero.png';
 import header1 from './header1.png'
-import esaree1 from './esaree1.jpg';
-import esaree2 from './esaree2.png';
+import esaree1 from './sareeef.jpg';
+import esaree2 from './sareeef1.jpg';
 import brownchudu from './brownchudu.png';
 import curt from './curt.png';
 import yellowc from './yellowc.png';

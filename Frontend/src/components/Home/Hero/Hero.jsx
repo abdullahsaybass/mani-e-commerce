@@ -66,7 +66,7 @@ const Hero = () => {
             <div className="saree-container">
               <div className="saree-text">
                 <p className="edition">Mani Textile New Edition</p>
-                <h1 className="title">{item.title}</h1>
+                <h1 className="titles">{item.title}</h1>
                 <div className="divider"></div>
                 <p className="description">{item.description}</p>
                 <ul className="features">

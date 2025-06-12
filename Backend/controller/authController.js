@@ -48,7 +48,7 @@ import User from '../model/user.js';
 import transporter from '../config/nodemailer.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const CLIENT_URL = process.env.CLIENT_URL; // e.g. https://app.manitextile.com
+const CLIENT_URL = process.env.CLIENT_URL;
 
 // POST /api/auth/register
 export const register = async (req, res) => {
@@ -56,19 +56,20 @@ export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ success: 'false', message: 'Please fill all fields' });
+    return res.json({ success: 'false', message: 'Please fill all fields' });
   }
 
   try {
-    if (await User.findOne({ email })) {
-      return res.status(400).json({ success: 'false', message: 'User already exists' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.json({ success: 'false', message: 'User already exists' });
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
     const savedUser = await new User({ name, email, password: hashedPassword }).save();
     console.log('✅ [register] savedUser =', savedUser);
 
-    // JWT
+    // Generate JWT token
     const token = jwt.sign({ id: savedUser._id }, JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, {
       httpOnly: true,
@@ -77,18 +78,24 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send Welcome Email
-    await transporter.sendMail({
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: 'Welcome to ManiTextile',
-      text: `Welcome to ManiTextile, ${name}! Your registration was successful.`,
-    });
+    // Send welcome email
+    try {
+      console.log('📤 Sending welcome email...');
+      const info = await transporter.sendMail({
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: 'Welcome to ManiTextile',
+        text: `Hi ${name},\n\nThanks for registering at ManiTextile!\n\n—The ManiTextile Team`,
+      });
+      console.log('✅ Email sent:', info.messageId);
+    } catch (err) {
+      console.error('❌ Error sending email:', err.message);
+    }
 
-    return res.json({ success: 'true', message: 'Your account has been registered! Please check your email.' });
+    return res.json({ success: 'true', message: 'Registration successful (email sent)' });
   } catch (error) {
     console.error('❌ [register] error:', error);
-    return res.status(500).json({ success: 'false', message: error.message });
+    return res.json({ success: 'false', message: error.message });
   }
 };
 
@@ -103,13 +110,10 @@ export const login = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ success: 'false', message: 'User does not exist' });
-    }
+    if (!user) return res.status(400).json({ success: 'false', message: 'User does not exist' });
 
-    if (!await bcrypt.compare(password, user.password)) {
-      return res.status(400).json({ success: 'false', message: 'Invalid password' });
-    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ success: 'false', message: 'Invalid password' });
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, {
@@ -137,9 +141,22 @@ export const logout = (req, res) => {
 };
 
 // GET /api/auth/isauth
-export const isAuthenticated = (req, res) => {
-  // You can add middleware to verify the JWT before this
-  return res.json({ success: 'true' });
+
+export const isAuthenticated = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Not authenticated' });
+  }
+
+  try {
+    const { id } = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(id).select('-password');
+    if (!user) throw new Error('User not found');
+
+    return res.json({ success: true, user });
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Invalid token' });
+  }
 };
 
 // POST /api/auth/forgot-password
@@ -180,7 +197,7 @@ export const resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }
+      resetPasswordExpires: { $gt: Date.now() },
     });
     if (!user) return res.status(400).json({ success: 'false', message: 'Invalid or expired token' });
 
