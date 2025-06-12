@@ -1,12 +1,12 @@
 import React from 'react';
 import Slider from 'react-slick';
-
+import './collection.css';
 // Slick CSS from node_modules:
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 // **Make sure this path matches your file structure exactly!**
-import './CollectionsSection.css';
+// import './CollectionsSection.css';
 
 const CollectionsSection = () => {
   const items = [

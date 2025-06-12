@@ -28,22 +28,26 @@
   margin: 12px auto 0;
 }
 
+/* Hide old grid, use slider instead */
 .products-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  display: none;
 }
 
+/* Slider slide padding */
+.product-slider .slick-slide {
+  padding: 0 8px;
+}
+
+/* Card */
 .product-card {
+  background: #fff;
   text-align: center;
   padding: 20px 10px;
   position: relative;
-  border-right: 1px solid #eee;
-}
-.product-card:nth-child(6n) {
-  border-right: none;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .discount-badge {
@@ -62,6 +66,7 @@
   max-width: 100px;
   height: auto;
   margin: 0 auto 16px;
+  display: block;
 }
 
 .category-label {
@@ -107,4 +112,15 @@
 }
 .view-all-btn:hover {
   opacity: 0.9;
+}
+
+/* Override slick default arrow colors */
+.slick-prev:before,
+.slick-next:before {
+  color: #333;
+}
+
+/* Remove extra margin on last slide */
+.product-slider .slick-slide:last-child {
+  padding-right: 0;
 }
