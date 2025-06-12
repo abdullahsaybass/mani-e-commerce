@@ -6,12 +6,6 @@ const Exclusive = () => {
   return (
     <div className="saree-showcase">
       <div className="saree-card">
-        <img
-          src={assets.esaree1}
-          alt="Exclusive Saree"
-          className="saree-img"
-        />
-        <div className="saree-overlay" />
         <div className="saree-content">
           <p className="saree-subtitle">MANI TEXTILES</p>
           <h2 className="saree-title">EXCLUSIVE SAREE COLLECTIONS</h2>
@@ -21,15 +15,15 @@ const Exclusive = () => {
           </p>
           <button className="saree-button">LEARN MORE</button>
         </div>
-      </div>
-
-      <div className="saree-card">
         <img
-          src={assets.esaree2}
-          alt="Designer Saree"
+          src={assets.esaree1}
+          alt="Exclusive Saree"
           className="saree-img"
         />
         <div className="saree-overlay" />
+      </div>
+
+      <div className="saree-card">
         <div className="saree-content">
           <p className="saree-subtitle">MANI TEXTILES</p>
           <h2 className="saree-title">DESIGNER COLLECTIONS</h2>
@@ -39,6 +33,12 @@ const Exclusive = () => {
           </p>
           <button className="saree-button">LEARN MORE</button>
         </div>
+        <img
+          src={assets.esaree2}
+          alt="Designer Saree"
+          className="saree-img"
+        />
+        <div className="saree-overlay" />
       </div>
     </div>
   );

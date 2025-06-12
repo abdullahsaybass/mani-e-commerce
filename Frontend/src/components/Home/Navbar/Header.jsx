@@ -1,3 +1,5 @@
+
+// Header.jsx
 import React, { useState } from "react";
 import {
   FaHeart,
@@ -21,7 +23,7 @@ const MENU = [
   { label: "Contact", href: "#" },
 ];
 
-const Header = ({ isLoggedIn = false }) => {
+const Header = ({ isLoggedIn = false, cartItems = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -29,6 +31,12 @@ const Header = ({ isLoggedIn = false }) => {
     setActiveIndex(index);
     setIsMobileMenuOpen(false);
   };
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + item.qty * item.discountedPrice,
+    0
+  );
 
   return (
     <div className="header">
@@ -65,12 +73,12 @@ const Header = ({ isLoggedIn = false }) => {
           <div className="icon-slice">
             <FaHeart />
           </div>
-          <div className="slice cart-slice">
+          <Link to="/cartpage" className="slice cart-slice">
             <span className="bag-text">YOUR BAG</span>
             <FaShoppingBag />
-            <span className="badge">5</span>
-            <span className="price">₹1195.00</span>
-          </div>
+            <span className="badge">{totalItems}</span>
+            <span className="price">₹{totalPrice.toFixed(2)}</span>
+          </Link>
         </div>
       </div>
 
@@ -94,7 +102,7 @@ const Header = ({ isLoggedIn = false }) => {
                 )}
                 <Link to="/cart" className="mobile-cart">
                   <FaShoppingBag />
-                  <span className="badge">5</span>
+                  <span className="badge">{totalItems}</span>
                 </Link>
               </>
             )}

@@ -85,3 +85,93 @@
   background-color: #d4af37;
   color: white;
 }
+/* Base styles already defined above... */
+
+@media (max-width: 1024px) {
+  .saree-showcase {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .saree-card {
+    width: 100%;
+    height: 400px;
+  }
+
+  .saree-content {
+    padding: 1rem;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .saree-title {
+    font-size: 22px;
+  }
+
+  .saree-description {
+    font-size: 13px;
+  }
+
+  .saree-button {
+    padding: 10px 20px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 768px) {
+  .saree-card {
+    height: 350px;
+  }
+
+  .saree-content {
+    padding: 1rem;
+    max-width: 95%;
+  }
+
+  .saree-subtitle {
+    font-size: 11px;
+  }
+
+  .saree-title {
+    font-size: 20px;
+  }
+
+  .saree-description {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .saree-button {
+    padding: 10px 18px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .saree-card {
+    height: 300px;
+  }
+
+  .saree-content {
+    max-width: 95%;
+    padding: 0.5rem;
+  }
+
+  .saree-subtitle {
+    font-size: 10px;
+  }
+
+  .saree-title {
+    font-size: 18px;
+  }
+
+  .saree-description {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .saree-button {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+}
