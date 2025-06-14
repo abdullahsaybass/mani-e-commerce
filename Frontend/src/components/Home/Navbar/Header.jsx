@@ -1,10 +1,8 @@
-
-// Header.jsx
+// src/components/Header/Header.jsx
 import React, { useState } from "react";
 import {
   FaHeart,
   FaShoppingBag,
-  FaSearch,
   FaBars,
   FaTimes,
   FaUserCircle,
@@ -14,23 +12,25 @@ import { assets } from "../../../assets/assets";
 import "./Header.css";
 
 const MENU = [
-  { label: "Home", href: "#" },
-  { label: "About Us", href: "#" },
-  { label: "Products", href: "#" },
-  { label: "Track Order", href: "#" },
-  { label: "Blog", href: "#" },
-  { label: "Gallery", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Home", href: "/" },
+  {
+    label: "Products",
+    href: "/products",
+    subMenu: [
+      { label: "Men", href: "/products/men" },
+      { label: "Women", href: "/products/women" },
+      { label: "Kids", href: "/products/kids" },
+    ],
+  },
+  { label: "Track Order", href: "/trackorder" },
+  { label: "Cart", href: "/cartpage" },
+  { label: "Contact", href: "/contact" },
+  { label: "Blog", href: "/blog" },
 ];
 
 const Header = ({ isLoggedIn = false, cartItems = [] }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleMenuClick = (index) => {
-    setActiveIndex(index);
-    setIsMobileMenuOpen(false);
-  };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
   const totalPrice = cartItems.reduce(
@@ -64,12 +64,6 @@ const Header = ({ isLoggedIn = false, cartItems = [] }) => {
               </Link>
             )}
           </div>
-          <div className="lang-slice">
-            <select className="lang-select">
-              <option value="en">EN</option>
-              <option value="ta">TA</option>
-            </select>
-          </div>
           <div className="icon-slice">
             <FaHeart />
           </div>
@@ -85,82 +79,104 @@ const Header = ({ isLoggedIn = false, cartItems = [] }) => {
       {/* Main Header */}
       <header className="main-header">
         <div className="header-file">
-          <img src={assets.logo} alt="Logo" className="header-logo" />
+          <Link to="/">
+            <img src={assets.logo} alt="Logo" className="header-logo" />
+          </Link>
 
-          {/* Mobile Actions */}
+          {/* Mobile Header Actions */}
           <div className="mobile-header-actions">
             {!isMobileMenuOpen && (
-              <>
-                {!isLoggedIn ? (
-                  <Link className="mobile-login-btn" to="/login">
-                    LOGIN
-                  </Link>
-                ) : (
-                  <Link to="/profile" className="mobile-profile-icon">
-                    <FaUserCircle />
-                  </Link>
-                )}
-                <Link to="/cart" className="mobile-cart">
-                  <FaShoppingBag />
-                  <span className="badge">{totalItems}</span>
+              !isLoggedIn ? (
+                <Link className="mobile-login-btn" to="/login">
+                  LOGIN
                 </Link>
-              </>
+              ) : (
+                <Link to="/profile" className="mobile-profile-icon">
+                  <FaUserCircle />
+                </Link>
+              )
             )}
 
-            <FaBars
-              className="hamburger-icon"
-              onClick={() => setIsMobileMenuOpen(true)}
-            />
+            {/* Toggle Hamburger / Close Icon */}
+            {isMobileMenuOpen ? (
+              <FaTimes
+                className="hamburger-icon close-icon"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+            ) : (
+              <FaBars
+                className="hamburger-icon"
+                onClick={() => setIsMobileMenuOpen(true)}
+              />
+            )}
 
-            {/* Drawer Navigation */}
+            {/* Mobile Drawer */}
             <nav className={`nav-links ${isMobileMenuOpen ? "open" : ""}`}>
               <div className="drawer-header">
-                <span className="drawer-title">Menu</span>
-                <FaTimes
-                  className="close-icon"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <img
+                    src={assets.logo}
+                    alt="Logo"
+                    className="drawer-logo"
+                    style={{ height: "40px", marginBottom: "10px" }}
+                  />
+                </Link>
+                {/* close icon inside drawer header is now optional */}
               </div>
               {MENU.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={item.href}
-                  className={idx === activeIndex ? "active" : ""}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleMenuClick(idx);
-                  }}
-                >
-                  {item.label}
-                </a>
+                <div key={idx}>
+                  <Link
+                    to={item.href}
+                    className={idx === activeIndex ? "active" : ""}
+                    onClick={() => {
+                      setActiveIndex(idx);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                </div>
               ))}
             </nav>
           </div>
 
           {/* Desktop Menu */}
           <div className="header-menu">
-            <FaSearch className="search-icon" />
             <FaBars
               className="hamburger-icon"
               onClick={() => setIsMobileMenuOpen(true)}
             />
-            <nav
-              className={`nav-links desktop-nav ${
-                isMobileMenuOpen ? "open" : ""
-              }`}
-            >
+            <nav className="nav-links desktop-nav">
               {MENU.map((item, idx) => (
-                <a
+                <div
                   key={idx}
-                  href={item.href}
-                  className={idx === activeIndex ? "active" : ""}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleMenuClick(idx);
-                  }}
+                  className={`nav-item ${item.subMenu ? "has-dropdown" : ""}`}
+                  onMouseEnter={() => item.subMenu && setActiveIndex(idx)}
+                  onMouseLeave={() => item.subMenu && setActiveIndex(null)}
                 >
-                  {item.label}
-                </a>
+                  <Link
+                    to={item.href}
+                    className={idx === activeIndex ? "active" : ""}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+
+                  {item.subMenu && activeIndex === idx && (
+                    <div className="dropdown-menu">
+                      {item.subMenu.map((sub, subIdx) => (
+                        <Link
+                          key={subIdx}
+                          to={sub.href}
+                          className="dropdown-item"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
             </nav>
           </div>
